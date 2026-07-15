@@ -1,0 +1,206 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: roleplay
+    description: Technical support role play training
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /roleplay/message:
+    post:
+      operationId: sendRoleplayMessage
+      tags: [roleplay]
+      summary: Send a role play message
+      description: Sends agent message and gets AI customer response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleplayMessageRequest"
+      responses:
+        "200":
+          description: AI customer response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleplayMessageResponse"
+  /roleplay/transcribe:
+    post:
+      operationId: transcribeRoleplayAudio
+      tags: [roleplay]
+      summary: Transcribe spoken agent audio to text
+      description: Accepts base64-encoded audio from the agent and returns the transcribed text via Whisper.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeRequest"
+      responses:
+        "200":
+          description: Transcribed text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscribeResponse"
+  /roleplay/speech:
+    post:
+      operationId: synthesizeRoleplaySpeech
+      tags: [roleplay]
+      summary: Convert customer AI text to spoken audio
+      description: Returns an MP3 audio stream of the given text spoken by a synthetic voice.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpeechRequest"
+      responses:
+        "200":
+          description: Audio response (base64 MP3)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechResponse"
+  /roleplay/feedback:
+    post:
+      operationId: getRoleplayFeedback
+      tags: [roleplay]
+      summary: Get feedback on a completed role play session
+      description: Analyzes the full conversation and returns structured feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleplayFeedbackRequest"
+      responses:
+        "200":
+          description: Session feedback and score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleplayFeedbackResponse"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    ChatMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+      required: [role, content]
+    RoleplayMessageRequest:
+      type: object
+      properties:
+        scenarioId:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        customSystemPrompt:
+          type: string
+          description: >
+            Optional custom AI system prompt for org-specific scenarios.
+            When provided, overrides the built-in prompt for the given scenarioId.
+      required: [scenarioId, messages]
+    RoleplayMessageResponse:
+      type: object
+      properties:
+        response:
+          type: string
+      required: [response]
+    RoleplayFeedbackRequest:
+      type: object
+      properties:
+        scenarioId:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        customSystemPrompt:
+          type: string
+          description: Optional custom scenario context for more accurate feedback.
+      required: [scenarioId, messages]
+    TranscribeRequest:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+          description: Base64-encoded audio (webm/ogg/mp4/wav/m4a).
+        mimeType:
+          type: string
+          description: MIME type of the audio, e.g. "audio/webm".
+      required: [audioBase64, mimeType]
+    TranscribeResponse:
+      type: object
+      properties:
+        text:
+          type: string
+      required: [text]
+    SpeechRequest:
+      type: object
+      properties:
+        text:
+          type: string
+        voice:
+          type: string
+          description: Voice id (alloy, echo, fable, onyx, nova, shimmer). Defaults to "nova".
+      required: [text]
+    SpeechResponse:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+          description: Base64-encoded MP3 audio.
+        mimeType:
+          type: string
+      required: [audioBase64, mimeType]
+    RoleplayFeedbackResponse:
+      type: object
+      properties:
+        score:
+          type: integer
+        summary:
+          type: string
+        strengths:
+          type: array
+          items:
+            type: string
+        improvements:
+          type: array
+          items:
+            type: string
+      required: [score, summary, strengths, improvements]

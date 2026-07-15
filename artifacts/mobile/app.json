@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "PACS Support Trainer",
+    "slug": "pacssupporttrainer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "pacssupporttrainer",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F1F5F9"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pacssupporttrainer.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Allow PACS Support Trainer to use the microphone so you can practice voice role-play with the AI customer."
+      }
+    },
+    "android": {
+      "package": "com.pacssupporttrainer.app"
+    },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow PACS Support Trainer to use the microphone so you can practice voice role-play with the AI customer."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

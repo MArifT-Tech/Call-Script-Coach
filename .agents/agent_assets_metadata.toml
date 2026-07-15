@@ -1,0 +1,13 @@
+uploads = []
+
+[[generated]]
+id = "QIcJe0WjKSEjSJJ42keqp"
+uri = "file://artifacts/mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[outputs]]
+id = "RaDCzn3WsSrgbN8dU95qU"
+uri = "file://exports/support-script-trainer-use-case.pdf"
+type = "pdf"
+title = "Support Script Trainer — Use Case"
